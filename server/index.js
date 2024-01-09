@@ -12,7 +12,7 @@ global.access_token = '';
 
 const spotify_client_id = process.env.SPOTIFY_CLIENT_ID;
 const spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET;
-const spotify_redirect_uri = 'https://jacob-kirby-spotify-app-1-4c99987e1877.herokuapp.com//auth/callback';
+const spotify_redirect_uri = 'https://jacob-kirby-spotify-app-1-4c99987e1877.herokuapp.com/auth/callback';
 
 var generateRandomString = function(length) {
   var text = '';
