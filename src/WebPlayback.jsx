@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const track = {
   name: "",
@@ -33,23 +33,23 @@ function WebPlayback(props) {
   const [isAutoplayPanelVisible, setAutoplayPanelVisible] = useState(false);
   const [isPlayerReady, setPlayerReady] = useState(false);
   
-  const history = useHistory();
+  const navigate = useNavigate();
   const handleUnauthorizedAccess = (response) => {
     if (response.status === 401) {
       console.log("Token expired or invalid, redirecting to login");
-      history.push('/auth/login');
+      navigate('/auth/login');
     }
   };
 
   useEffect(() => {
     if (!props.token || props.token === '') {
       console.log("No token found, redirecting to login");
-      history.push('/auth/login'); // Redirect to login page
+      navigate('/auth/login');
     } else {
       console.log("Token found, proceeding with app");
       // Initialization code that requires token
     }
-  }, [props.token, history]);
+  }, [props.token, navigate]);
 
   useEffect(() => {
     if (!window.Spotify) {
@@ -164,7 +164,7 @@ function WebPlayback(props) {
       .then(response => {
         if (response.status === 401) {
           console.log("Unauthorized access, redirecting to login");
-          history.push('/auth/login');
+          navigate('/auth/login');
           return null; // Prevent further processing of the response
         }
         return response.json();
@@ -175,7 +175,7 @@ function WebPlayback(props) {
         }
       })
       .catch(console.error);
-  }, [history]);
+  }, [navigate]);
 
   const toggleDisplay = () => {
     setDisplayVisible(!isDisplayVisible);
