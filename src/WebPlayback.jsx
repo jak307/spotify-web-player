@@ -129,7 +129,7 @@ function WebPlayback(props) {
         }
     
         const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${topTrackData.id}`);
-        handleUnauthorizedAccess(topTrackResponse);
+        handleUnauthorizedAccess(recommendationsResponse);
         const recommendationsData = await recommendationsResponse.json();
     
         setRecommendedTracks(recommendationsData.tracks);
@@ -226,7 +226,7 @@ function WebPlayback(props) {
       const seed_tracks = currentSeeds.join(',');
       try {
         const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${seed_tracks}&limit=1`);
-        handleUnauthorizedAccess(topTrackResponse);
+        handleUnauthorizedAccess(recommendationsResponse);
         const recommendationsData = await recommendationsResponse.json();
   
         const recommendedTrack = recommendationsData.tracks.find(track => !playedTracks.has(track.id));
@@ -254,7 +254,7 @@ function WebPlayback(props) {
       }
   
       const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${topTrackData.id}&limit=1`);
-      handleUnauthorizedAccess(topTrackResponse);
+      handleUnauthorizedAccess(recommendationsResponse);
       const recommendationsData = await recommendationsResponse.json();
 
       const recommendedTrack = recommendationsData.tracks.find(track => !playedTracks.has(track.id));
@@ -272,7 +272,7 @@ function WebPlayback(props) {
   const playRandomGenreTrack = async () => {
     const randomGenre = genres[Math.floor(Math.random() * genres.length)];
     const recommendationsResponse = await fetch(`/recommendations?seed_genres=${randomGenre}&limit=1`);
-    handleUnauthorizedAccess(topTrackResponse);
+    handleUnauthorizedAccess(recommendationsResponse);
     const recommendationsData = await recommendationsResponse.json();  
     const recommendedTrack = recommendationsData.tracks[0];
     if (recommendedTrack) {
