@@ -66,7 +66,14 @@ app.get('/auth/callback', (req, res) => {
   });
 });
 
-app.get('/top-tracks', async (req, res) => {
+const authenticate = (req, res, next) => {
+  if (!global.access_token || global.access_token === '') {
+    return res.status(401).json({ error: 'Unauthorized: No access token' });
+  }
+  next();
+};
+
+app.get('/top-tracks', authenticate, async (req, res) => {
   const randomOffset = Math.floor(Math.random() * 50);
 
   const options = {
@@ -96,7 +103,7 @@ app.get('/top-tracks', async (req, res) => {
   });
 });
 
-app.get('/genre-seeds', async (req, res) => {
+app.get('/genre-seeds', authenticate, async (req, res) => {
   if (fs.existsSync('genre-seeds.json')) {
     const cachedGenres = JSON.parse(fs.readFileSync('genre-seeds.json'));
     console.log('Genres fetched from JSON file');
@@ -124,7 +131,7 @@ app.get('/genre-seeds', async (req, res) => {
   });
 });
 
-app.get('/recommendations', async (req, res) => {
+app.get('/recommendations', authenticate, async (req, res) => {
   const seed_tracks = req.query.seed_tracks;
   const seed_genres = req.query.seed_genres;
   const limit = req.query.limit || 1;
