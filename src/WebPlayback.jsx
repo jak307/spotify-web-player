@@ -34,7 +34,6 @@ function WebPlayback(props) {
   const [isPlayerReady, setPlayerReady] = useState(false);
   
   const history = useHistory();
-  const [genres, setGenres] = useState([]);
   const handleUnauthorizedAccess = (response) => {
     if (response.status === 401) {
       console.log("Token expired or invalid, redirecting to login");
