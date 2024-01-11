@@ -34,6 +34,7 @@ function WebPlayback(props) {
   const [isPlayerReady, setPlayerReady] = useState(false);
   
   const history = useHistory();
+  const [genres, setGenres] = useState([]);
   const handleUnauthorizedAccess = (response) => {
     if (response.status === 401) {
       console.log("Token expired or invalid, redirecting to login");
@@ -161,10 +162,21 @@ function WebPlayback(props) {
 
   useEffect(() => {
     fetch('/genre-seeds')
-      .then(response => response.json())
-      .then(data => setGenres(data))
+      .then(response => {
+        if (response.status === 401) {
+          console.log("Unauthorized access, redirecting to login");
+          history.push('/auth/login');
+          return null; // Prevent further processing of the response
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (data) {
+          setGenres(data);
+        }
+      })
       .catch(console.error);
-  }, []);
+  }, [history]);
 
   const toggleDisplay = () => {
     setDisplayVisible(!isDisplayVisible);
