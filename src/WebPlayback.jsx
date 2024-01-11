@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const track = {
   name: "",
@@ -32,24 +31,6 @@ function WebPlayback(props) {
   const [autoplayType, setAutoplayType] = useState("similar");
   const [isAutoplayPanelVisible, setAutoplayPanelVisible] = useState(false);
   const [isPlayerReady, setPlayerReady] = useState(false);
-  
-  const navigate = useNavigate();
-  const handleUnauthorizedAccess = (response) => {
-    if (response.status === 401) {
-      console.log("Token expired or invalid, redirecting to login");
-      navigate('/auth/login');
-    }
-  };
-
-  useEffect(() => {
-    if (!props.token || props.token === '') {
-      console.log("No token found, redirecting to login");
-      navigate('/auth/login');
-    } else {
-      console.log("Token found, proceeding with app");
-      // Initialization code that requires token
-    }
-  }, [props.token, navigate]);
 
   useEffect(() => {
     if (!window.Spotify) {
@@ -121,7 +102,6 @@ function WebPlayback(props) {
       try {
         console.log("Fetching recommended songs");
         const topTrackResponse = await fetch('/top-tracks');
-        handleUnauthorizedAccess(topTrackResponse);
         const topTrackData = await topTrackResponse.json();
     
         if (!topTrackData || !topTrackData.id) {
@@ -129,7 +109,6 @@ function WebPlayback(props) {
         }
     
         const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${topTrackData.id}`);
-        handleUnauthorizedAccess(recommendationsResponse);
         const recommendationsData = await recommendationsResponse.json();
     
         setRecommendedTracks(recommendationsData.tracks);
@@ -161,21 +140,10 @@ function WebPlayback(props) {
 
   useEffect(() => {
     fetch('/genre-seeds')
-      .then(response => {
-        if (response.status === 401) {
-          console.log("Unauthorized access, redirecting to login");
-          navigate('/auth/login');
-          return null; // Prevent further processing of the response
-        }
-        return response.json();
-      })
-      .then(data => {
-        if (data) {
-          setGenres(data);
-        }
-      })
+      .then(response => response.json())
+      .then(data => setGenres(data))
       .catch(console.error);
-  }, [navigate]);
+  }, []);
 
   const toggleDisplay = () => {
     setDisplayVisible(!isDisplayVisible);
@@ -226,7 +194,6 @@ function WebPlayback(props) {
       const seed_tracks = currentSeeds.join(',');
       try {
         const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${seed_tracks}&limit=1`);
-        handleUnauthorizedAccess(recommendationsResponse);
         const recommendationsData = await recommendationsResponse.json();
   
         const recommendedTrack = recommendationsData.tracks.find(track => !playedTracks.has(track.id));
@@ -246,7 +213,6 @@ function WebPlayback(props) {
     try {
       console.log("Fetching random top track and its recommendation");
       const topTrackResponse = await fetch('/top-tracks');
-      handleUnauthorizedAccess(topTrackResponse);
       const topTrackData = await topTrackResponse.json();
   
       if (!topTrackData || !topTrackData.id) {
@@ -254,7 +220,6 @@ function WebPlayback(props) {
       }
   
       const recommendationsResponse = await fetch(`/recommendations?seed_tracks=${topTrackData.id}&limit=1`);
-      handleUnauthorizedAccess(recommendationsResponse);
       const recommendationsData = await recommendationsResponse.json();
 
       const recommendedTrack = recommendationsData.tracks.find(track => !playedTracks.has(track.id));
@@ -272,7 +237,6 @@ function WebPlayback(props) {
   const playRandomGenreTrack = async () => {
     const randomGenre = genres[Math.floor(Math.random() * genres.length)];
     const recommendationsResponse = await fetch(`/recommendations?seed_genres=${randomGenre}&limit=1`);
-    handleUnauthorizedAccess(recommendationsResponse);
     const recommendationsData = await recommendationsResponse.json();  
     const recommendedTrack = recommendationsData.tracks[0];
     if (recommendedTrack) {
@@ -529,4 +493,4 @@ function WebPlayback(props) {
   );
 }
 
-export default WebPlayback;
+export default WebPlayback; 
